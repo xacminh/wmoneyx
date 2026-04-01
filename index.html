@@ -26,34 +26,37 @@
         @keyframes led-line { 0% { left: -100%; } 100% { left: 100%; } }
         .btn-action:hover { transform: translateY(-4px); background: #fffafa; box-shadow: 0 10px 25px rgba(255, 0, 255, 0.15); }
         .btn-primary-custom { border: none !important; background: #ff00ff !important; color: white !important; }
-        .step-card { background: #fff; border: 1px solid #ffb3ff; border-left: 8px solid #ff00ff; padding: 20px; border-radius: 15px; margin-bottom: 15px; text-align: left; color: #444; box-shadow: 0 5px 15px rgba(255, 0, 255, 0.05); }
-        .input-mega { width: 100%; padding: 20px; border: 3px solid #ffb3ff; border-radius: 20px; margin: 20px 0; outline: none; font-size: 1.2rem; font-weight: 700; color: #ff00ff; background: #fff; text-align: center; transition: 0.3s; }
+        .input-mega { width: 100%; padding: 15px; border: 3px solid #ffb3ff; border-radius: 20px; margin: 10px 0; outline: none; font-size: 1.1rem; font-weight: 700; color: #ff00ff; background: #fff; text-align: center; transition: 0.3s; }
         .btn-send-mega { background: linear-gradient(90deg, #ff00ff, #d600d6); color: white; width: 100%; padding: 20px; border-radius: 20px; font-weight: 900; font-size: 1.3rem; text-transform: uppercase; box-shadow: 0 8px 0px #990099; cursor: pointer; transition: 0.2s; }
         .btn-send-mega:active { transform: translateY(4px); box-shadow: 0 4px 0px #990099; }
-        .footer-info { margin-top: 30px; padding: 20px; background: white; border-radius: 20px; border: 2px dashed #ff00ff; color: #666; max-width: 500px; margin-left: auto; margin-right: auto; }
+        .footer-info { margin-top: 20px; padding: 15px; background: #fff5ff; border-radius: 15px; border: 2px dashed #ff00ff; color: #666; max-width: 500px; margin-left: auto; margin-right: auto; }
         .copyright-text { margin-top: 40px; font-size: 0.85rem; font-weight: 700; color: #ff00ff; opacity: 0.9; }
         .back-link { margin-top: 20px; font-weight: 700; color: #ff00ff; cursor: pointer; padding: 8px 20px; background: white; border: 1px solid #ffb3ff; border-radius: 50px; display: inline-block; }
-        #notification-box { position: fixed; top: 20px; right: 20px; z-index: 9999; background: white; border-left: 5px solid #00ffff; padding: 15px; border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); transform: translateX(150%); transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        #notification-box.show { transform: translateX(0); }
+        .step-card { background: #fff; border: 1px solid #ffb3ff; border-left: 6px solid #ff00ff; padding: 15px; border-radius: 12px; margin-bottom: 10px; text-align: left; color: #444; }
     </style>
 </head>
 <body>
     <div id="canvas-container"></div>
-    <div id="notification-box">
-        <p class="text-xs font-bold text-gray-400 uppercase">Thông báo hệ thống</p>
-        <p id="notif-content" class="text-sm font-bold text-pink-600">...</p>
-    </div>
-
     <div class="main-wrapper">
         <div class="logo-header">WMONEYX</div>
 
-        <div id="home-page" class="content-full">
+        <!-- TRANG ĐĂNG NHẬP (LẤY UUID TỪ PROFILES) -->
+        <div id="auth-page" class="content-full">
+            <div id="datetime-auth" class="time-badge">...</div>
+            <div class="cute-animal-box">🔐</div>
+            <h2 class="text-xl font-black text-pink-600 mb-2 uppercase">Xác thực tài khoản</h2>
+            <p class="text-gray-500 text-sm mb-6 px-4">Nhập Email đăng ký wmoneyX của bạn.</p>
+            <div class="max-w-md mx-auto">
+                <input type="email" id="init-email" class="input-mega" placeholder="Nhập Email của bạn...">
+                <button onclick="unlockApp()" id="btn-login" class="btn-send-mega mt-2">BẮT ĐẦU NGAY</button>
+            </div>
+        </div>
+
+        <!-- TRANG CHỦ -->
+        <div id="home-page" class="content-full" style="display: none;">
             <div id="datetime" class="time-badge">...</div>
             <div class="cute-animal-box">🐼</div>
-            <p class="text-pink-600 font-bold mb-8">
-                Bạn đã hoàn thành nhiệm vụ đặc biệt.<br>Vui lòng dán link để Admin xác minh ngay!
-            </p>
-
+            <p class="text-pink-600 font-bold mb-2 italic">Xin chào: <span id="display-email" class="underline"></span></p>
             <div class="grid grid-cols-1 gap-1 max-w-md mx-auto">
                 <button onclick="showVerifyPage('Google Map')" class="btn-action">
                     <img src="https://www.google.com/images/branding/googleg/1x/googleg_standard_color_128dp.png" class="w-6" alt="google">
@@ -68,28 +71,29 @@
                     Xác minh Tải & Review App
                 </button>
             </div>
+            <button onclick="resetEmail()" class="text-[10px] text-gray-400 mt-10 hover:text-red-500 underline">Đăng xuất</button>
         </div>
 
+        <!-- TRANG GỬI MINH CHỨNG -->
         <div id="verify-page" class="content-full" style="display: none;">
-            <h2 id="verify-title" class="text-2xl md:text-3xl font-black text-[#ff00ff] mb-6 uppercase italic">HƯỚNG DẪN</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+            <h2 id="verify-title" class="text-2xl font-black text-[#ff00ff] mb-6 uppercase italic">GỬI MINH CHỨNG</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-2 mb-4 max-w-2xl mx-auto">
                 <div class="step-card">
-                    <div class="font-black text-[#ff00ff] text-xl mb-1">BƯỚC 1</div>
-                    <div>Vào phần copy trên thiết bị (Bộ nhớ tạm)</div>
+                    <div class="font-black text-[#ff00ff] text-sm">BƯỚC 1</div>
+                    <div class="text-[11px] font-bold" id="step1-text">Copy link bài đánh giá</div>
                 </div>
                 <div class="step-card">
-                    <div class="font-black text-[#ff00ff] text-xl mb-1">BƯỚC 2</div>
-                    <div id="step2-text">Dán link bài đánh giá vừa copy</div>
+                    <div class="font-black text-[#ff00ff] text-sm">BƯỚC 2</div>
+                    <div class="text-[11px] font-bold">Dán vào ô bên dưới</div>
+                </div>
+                <div class="step-card">
+                    <div class="font-black text-[#ff00ff] text-sm">BƯỚC 3</div>
+                    <div class="text-[11px] font-bold">Bấm "Xác nhận gửi"</div>
                 </div>
             </div>
             <div class="max-w-md mx-auto">
                 <input type="text" id="task-link" class="input-mega" placeholder="Dán link tại đây...">
-                <button onclick="sendToAdmin()" id="btn-send" class="btn-send-mega">GỬI XÁC MINH</button>
-            </div>
-            <div class="footer-info text-left">
-                <p class="mb-2 font-black text-red-500 flex items-center gap-2"><i class="fa-solid fa-clock"></i> THỜI GIAN DUYỆT:</p>
-                <div class="flex justify-between text-sm py-1 border-b border-pink-100"><span class="font-bold">Duyệt lần 1:</span><span class="text-[#ff00ff] font-black">24 GIỜ</span></div>
-                <div class="flex justify-between text-sm py-1"><span class="font-bold">Duyệt lần 2:</span><span class="text-[#ff00ff] font-black">10 NGÀY</span></div>
+                <button onclick="sendToAdmin()" id="btn-send" class="btn-send-mega mt-4">XÁC NHẬN GỬI</button>
             </div>
             <div class="back-link" onclick="showHomePage()"><i class="fa-solid fa-chevron-left"></i> Quay lại</div>
         </div>
@@ -104,27 +108,50 @@
 
         let scene, camera, renderer, crystals = [], particles;
         let selectedType = "";
+        let savedEmail = localStorage.getItem('wmoney_user_email');
+        let savedUserId = localStorage.getItem('wmoney_user_id');
 
-        // Lắng nghe Realtime từ bảng special_task_submissions
-        function initRealtime() {
-            _supabase
-                .channel('public:special_task_submissions')
-                .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'special_task_submissions' }, payload => {
-                    showNotification("Hệ thống đã nhận được 1 yêu cầu mới!");
-                })
-                .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'special_task_submissions' }, payload => {
-                    if (payload.new.status_1 === 'approved') {
-                        showNotification("Admin đã phê duyệt nhiệm vụ thành công!");
-                    }
-                })
-                .subscribe();
+        async function unlockApp() {
+            const email = document.getElementById('init-email').value.trim();
+            if(!email || !email.includes('@')) { alert('Vui lòng nhập Email hợp lệ!'); return; }
+            const btn = document.getElementById('btn-login');
+            btn.innerHTML = 'ĐANG KIỂM TRA...'; btn.disabled = true;
+
+            try {
+                const { data, error } = await _supabase.from('profiles').select('id, email').eq('email', email).single();
+                if (error || !data) {
+                    alert('Email này chưa đăng ký trên hệ thống!');
+                    btn.innerHTML = 'BẮT ĐẦU NGAY'; btn.disabled = false;
+                    return;
+                }
+                localStorage.setItem('wmoney_user_email', data.email);
+                localStorage.setItem('wmoney_user_id', data.id);
+                savedEmail = data.email;
+                savedUserId = data.id;
+                checkAuth();
+            } catch (err) {
+                alert('Lỗi kết nối!');
+                btn.innerHTML = 'BẮT ĐẦU NGAY'; btn.disabled = false;
+            }
         }
 
-        function showNotification(msg) {
-            const box = document.getElementById('notification-box');
-            document.getElementById('notif-content').innerText = msg;
-            box.classList.add('show');
-            setTimeout(() => box.classList.remove('show'), 4000);
+        function checkAuth() {
+            if(savedEmail && savedUserId) {
+                document.getElementById('auth-page').style.display = 'none';
+                document.getElementById('home-page').style.display = 'block';
+                document.getElementById('display-email').innerText = savedEmail;
+            } else {
+                document.getElementById('auth-page').style.display = 'block';
+                document.getElementById('home-page').style.display = 'none';
+            }
+        }
+
+        function resetEmail() {
+            if(confirm('Bạn muốn đăng xuất?')) {
+                localStorage.removeItem('wmoney_user_email');
+                localStorage.removeItem('wmoney_user_id');
+                window.location.reload();
+            }
         }
 
         function init3DBg() {
@@ -139,10 +166,7 @@
             for(let i=0; i<25; i++) {
                 let crystal = new THREE.Mesh(crystalGeo, crystalMat);
                 crystal.position.set(Math.random()*60-30, Math.random()*60-30, Math.random()*30-15);
-                let scale = Math.random() * 2 + 0.5;
-                crystal.scale.set(scale, scale, scale);
-                scene.add(crystal);
-                crystals.push(crystal);
+                scene.add(crystal); crystals.push(crystal);
             }
             const pGeo = new THREE.BufferGeometry();
             let pCoords = [];
@@ -155,10 +179,7 @@
 
         function animate3D() {
             requestAnimationFrame(animate3D);
-            crystals.forEach((c, i) => {
-                c.rotation.x += 0.005; c.rotation.y += 0.003;
-                c.position.y += Math.sin(Date.now() * 0.001 + i) * 0.005;
-            });
+            crystals.forEach(c => { c.rotation.x += 0.005; c.rotation.y += 0.003; });
             particles.rotation.y += 0.0005;
             renderer.render(scene, camera);
         }
@@ -169,7 +190,7 @@
             document.getElementById('verify-page').style.display = 'block';
             document.getElementById('verify-title').innerText = "XÁC MINH " + type;
             document.getElementById('task-link').value = '';
-            document.getElementById('step2-text').innerText = type === 'App' ? 'Dán link App hoặc mã giới thiệu của bạn.' : 'Dán link bài đánh giá (VD: https://maps.app.goo.gl/...)';
+            document.getElementById('step1-text').innerText = (type === 'App') ? "Copy link App/Mã giới thiệu" : "Copy link bài đánh giá";
             window.scrollTo(0,0);
         }
 
@@ -180,50 +201,42 @@
 
         async function sendToAdmin() {
             const link = document.getElementById('task-link').value.trim();
-            if(!link || !link.startsWith('http')) { alert('Vui lòng dán đúng Link nhiệm vụ!'); return; }
+            if(!link || !link.startsWith('http')) { alert('Vui lòng dán đúng Link minh chứng!'); return; }
             const btn = document.getElementById('btn-send');
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ĐANG GỬI...';
-            btn.disabled = true;
+            btn.innerHTML = 'ĐANG GỬI...'; btn.disabled = true;
 
             try {
-                // Gửi dữ liệu vào bảng special_task_submissions với các tên cột chuẩn xác
-                const { error } = await _supabase
-                    .from('special_task_submissions')
-                    .insert([{ 
-                        user_id: "7790668848", 
-                        task_type: selectedType, 
-                        review_link: link, 
-                        status_1: 'pending',
-                        created_at: new Date().toISOString(),
-                        completed_at: null,
-                        reward_amount: 0
-                    }]);
+                // CHÈN DỮ LIỆU ĐÚNG THEO CẤU TRÚC BẢNG TRONG ẢNH
+                const { error } = await _supabase.from('special_task_submissions').insert([{ 
+                    user_id: savedUserId,
+                    email: savedEmail,
+                    task_type: selectedType, 
+                    review_link: link, 
+                    status_1: 'pending',
+                    created_at: new Date().toISOString()
+                }]);
 
                 if (error) throw error;
-
-                confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#ff00ff', '#00ffff'] });
-                btn.innerHTML = 'THÀNH CÔNG!';
-                
+                confetti({ particleCount: 150, spread: 70, colors: ['#ff00ff', '#00ffff'] });
+                btn.innerHTML = 'GỬI THÀNH CÔNG!';
                 setTimeout(() => { 
-                    alert('Gửi thành công! Admin sẽ duyệt trong vòng 24h.'); 
+                    alert('Gửi thành công! Vui lòng chờ phê duyệt.'); 
                     window.location.href = 'https://wmoney-x.vercel.app/'; 
                 }, 1500);
-
             } catch (err) {
-                console.error(err);
-                alert('Lỗi gửi dữ liệu: ' + (err.message || '404 Table Not Found'));
-                btn.innerHTML = 'GỬI LẠI';
-                btn.disabled = false;
+                alert('Lỗi: ' + err.message);
+                btn.innerHTML = 'XÁC NHẬN GỬI'; btn.disabled = false;
             }
         }
 
         window.onload = () => {
-            init3DBg();
-            animate3D();
-            initRealtime();
-            setInterval(() => { document.getElementById('datetime').innerText = new Date().toLocaleString('vi-VN'); }, 1000);
+            init3DBg(); animate3D(); checkAuth();
+            setInterval(() => { 
+                const now = new Date().toLocaleString('vi-VN');
+                if(document.getElementById('datetime')) document.getElementById('datetime').innerText = now;
+                if(document.getElementById('datetime-auth')) document.getElementById('datetime-auth').innerText = now;
+            }, 1000);
         };
-
         window.onresize = () => {
             camera.aspect = window.innerWidth / window.innerHeight; camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
